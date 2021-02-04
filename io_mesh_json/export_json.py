@@ -88,26 +88,53 @@ def get_action_state( action, bone, frame ):
 # #####################################################
 
 TEMPLATE_FILE = """\
-{   
-    "vertices": [%(vertices)s],
+{
+    "colours" : {
+        "TAIL_COLOUR" : "COLOUR_WOODY_GREEN",
+        "FUSELAGE_UPPER_COLOUR" : "COLOUR_DARK_WOODY_GREEN",
+        "FUSELAGE_UPPER_SIDES_COLOUR" : "COLOUR_WOODY_GREEN",
+        "WING_UPPER_COLOUR" : "COLOUR_DARK_WOODY_GREEN",
+        "NOSE_UPPER_COLOUR" : "COLOUR_LIGHT_GREY",
+        "FUSELAGE_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
+        "FUSELAGE_LOWER_SIDES_COLOUR" : "COLOUR_MEDIUM_GREY",
+        "WING_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
+        "NOSE_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
+        "CANOPY_COLOUR" : "COLOUR_BLACK",
+        "INTAKE_COLOUR" : "COLOUR_DARK_GREY",
+        "FUSELAGE_REAR_COLOUR" : "COLOUR_DARK_GREY",
+        "EXHAUST_COLOUR" : "COLOUR_DULL_RED"
+    },
 
-    "normals": [%(normals)s],
+    "bspTreeRoot" : "eurofighterSection",
 
-    "colors": [%(colors)s],
+    "vertices": [
+        [%(vertices)s]
+    ],
 
-    "uvs": [%(uvs)s],
 
-    "faces": [%(faces)s],
-
-    "bones": [%(bones)s],
-
-    "boneWeights": [%(boneWeights)s],
-
-    "boneIndices": [%(boneIndices)s],
-
-    "animations": {%(animations)s}
+    "faces": {
+        "leftExhaustFace" : {
+            "colour" : "EXHAUST_COLOUR",
+            "vertices" : [%(faces)s]
+        },
+    }
 }
 """
+
+#    "normals": [%(normals)s],
+
+#    "colors": [%(colors)s],
+
+#    "uvs": [%(uvs)s],
+
+#    "bones": [%(bones)s],
+
+#    "boneWeights": [%(boneWeights)s],
+
+#    "boneIndices": [%(boneIndices)s],
+
+#    "animations": {%(animations)s}
+
 
 TEMPLATE_KEYFRAMES  = '[ %g,%g,%g, %g,%g,%g,%g, %g,%g,%g ]'
 TEMPLATE_BONE = """\
@@ -176,7 +203,7 @@ def get_animation():
     
 
 def get_mesh_string( obj ):
-    mesh = obj.to_mesh( bpy.context.scene, True, "PREVIEW" )
+    mesh = obj.to_mesh(preserve_all_data_layers=False, depsgraph=None)
     
     vertices = []
     normals = []
@@ -198,33 +225,33 @@ def get_mesh_string( obj ):
             vertices.append( obj.data.vertices[ vertex ].co.x )
             vertices.append( obj.data.vertices[ vertex ].co.y )
             vertices.append( obj.data.vertices[ vertex ].co.z )
-            
-            normals.append( obj.data.vertices[ vertex ].normal.x )
-            normals.append( obj.data.vertices[ vertex ].normal.y )
-            normals.append( obj.data.vertices[ vertex ].normal.z )
-            
+
+ #           normals.append( obj.data.vertices[ vertex ].normal.x )
+ #           normals.append( obj.data.vertices[ vertex ].normal.y )
+ #           normals.append( obj.data.vertices[ vertex ].normal.z )
+
             indices.append( vertex_number )
     
-    if len( mesh.tessface_uv_textures ) > 0:
-        for data in mesh.tessface_uv_textures.active.data:
-            uvs.append( data.uv1.x )
-            uvs.append( data.uv1.y )
-            uvs.append( data.uv2.x )
-            uvs.append( data.uv2.y )
-            uvs.append( data.uv3.x )
-            uvs.append( data.uv3.y )
+    # if len( mesh.tessface_uv_textures ) > 0:
+        # for data in mesh.tessface_uv_textures.active.data:
+            # uvs.append( data.uv1.x )
+            # uvs.append( data.uv1.y )
+            # uvs.append( data.uv2.x )
+            # uvs.append( data.uv2.y )
+            # uvs.append( data.uv3.x )
+            # uvs.append( data.uv3.y )
     
-    if len( mesh.tessface_vertex_colors ) > 0:
-        for data in mesh.tessface_vertex_colors.active.data:
-            colors.append( data.color1.r )
-            colors.append( data.color1.g )
-            colors.append( data.color1.b )
-            colors.append( data.color2.r )
-            colors.append( data.color2.g )
-            colors.append( data.color2.b )
-            colors.append( data.color3.r )
-            colors.append( data.color3.g )
-            colors.append( data.color3.b )
+    # if len( mesh.tessface_vertex_colors ) > 0:
+        # for data in mesh.tessface_vertex_colors.active.data:
+            # colors.append( data.color1.r )
+            # colors.append( data.color1.g )
+            # colors.append( data.color1.b )
+            # colors.append( data.color2.r )
+            # colors.append( data.color2.g )
+            # colors.append( data.color2.b )
+            # colors.append( data.color3.r )
+            # colors.append( data.color3.g )
+            # colors.append( data.color3.b )
     
     if( len( bpy.data.armatures ) > 0 ):
         armature = bpy.data.armatures[0]
@@ -314,15 +341,15 @@ def get_mesh_string( obj ):
             })
         
     return TEMPLATE_FILE % {
-        "vertices": flat_array( vertices ),
-        "normals":  flat_array( normals ),
-        "colors": flat_array( colors ),
-        "uvs": flat_array( uvs ),
+        "vertices": "],".join(map(str, vertices )), #flat_array( vertices ),
+#        "normals":  flat_array( normals ),
+#        "colors": flat_array( colors ),
+#        "uvs": flat_array( uvs ),
         "faces": flat_array( indices ),
-        "bones": ",".join( bones ),
-        "boneIndices": ",".join( boneIndices ),
-        "boneWeights": ",".join( boneWeights ),
-        "animations": get_animation()
+#        "bones": ",".join( bones ),
+#        "boneIndices": ",".join( boneIndices ),
+#        "boneWeights": ",".join( boneWeights ),
+#        "animations": get_animation()
     }
 
 
@@ -343,9 +370,9 @@ def save( operator, context, filepath = "" ):
     filepath = ensure_extension( filepath, ".json")
     
     bpy.ops.object.duplicate()
-    bpy.ops.object.mode_set( mode = "OBJECT" )
-    bpy.ops.object.modifier_add( type="TRIANGULATE" )
-    bpy.ops.object.modifier_apply( apply_as = "DATA", modifier = "Triangulate" )
+    #bpy.ops.object.mode_set( mode = "OBJECT" )
+    #bpy.ops.object.modifier_add( type="TRIANGULATE" )
+    #bpy.ops.object.modifier_apply(modifier = "Triangulate")
     
     export_mesh( context.active_object, filepath )
     bpy.ops.object.delete()
