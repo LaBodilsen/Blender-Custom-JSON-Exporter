@@ -24,7 +24,7 @@ bl_info = {
     "version": (0, 1, 0),
     "blender": (2, 90, 0),
     "location": "File > Import-Export",
-    "description": "Export Custom JSON format for Ernst Blofeld amiga 3D engine",
+    "description": "Export Custom JSON format for Ernst Blofeld Amiga 3D engine",
     "doc_url": "https://github.com/LaBodilsen/Blender-JSON-Exporter",
     "support": 'OFFICIAL',
     "category": "Import-Export",
