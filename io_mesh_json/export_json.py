@@ -84,7 +84,7 @@ def get_action_state( action, bone, frame ):
 
 
 # #####################################################
-# Templates - mesh
+# Templates - mesh + faces
 # #####################################################
 
 TEMPLATE_FILE = """\
