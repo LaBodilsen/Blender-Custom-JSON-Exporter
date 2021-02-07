@@ -52,6 +52,11 @@ def flat_array( array ):
     
     return ", ".join( str( round( x, 6 ) ) for x in array )
 
+def to_srgb(val):
+    if (val <= 0.0031308):
+        return (val * 12.92)
+    else:
+        return (1.055*(val**(1.0/2.4))-0.055)
 
 def get_mesh_string( context, global_scale ):
     import bpy
@@ -64,9 +69,9 @@ def get_mesh_string( context, global_scale ):
     obj = context.active_object
 
     for matcolor in bpy.context.active_object.data.materials:
-        Rcolor =  str(int(matcolor.diffuse_color[0] * 15))
-        Gcolor =  str(int(matcolor.diffuse_color[1] * 15))
-        Bcolor =  str(int(matcolor.diffuse_color[2] * 15))
+        Rcolor =  str(int(to_srgb(matcolor.diffuse_color[0]) * 15))
+        Gcolor =  str(int(to_srgb(matcolor.diffuse_color[1]) * 15))
+        Bcolor =  str(int(to_srgb(matcolor.diffuse_color[2]) * 15))
 
         rgb15col = "["+Rcolor+", "+Gcolor+", "+Bcolor+"]"
         colors.append(str('"'+matcolor.name+'" : '+rgb15col))
