@@ -56,7 +56,7 @@ TEMPLATE_FILE = """\
 
 TEMPLATE_FACE = """\
         "%(name)s" : {
-            "colour" : "COLOUR",
+            "colour" : "%(colour)s",
             "vertices" : [%(index)s]
         },
 """
@@ -83,8 +83,11 @@ def get_mesh_string( context, global_scale ):
     
     for faces in obj.data.polygons:
         facename = "face"+str(faces.index)
+        matindex = faces.material_index
+        facecolor = obj.data.materials[matindex].name
         objfaces.append(TEMPLATE_FACE % {
             "name" : facename,
+            "colour" : facecolor,
             "index" : flat_array( faces.vertices[:] ),
         })
         
