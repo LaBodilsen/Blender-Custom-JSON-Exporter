@@ -5,8 +5,6 @@ THIS IS A WIP AND NOT YET FULLY FUNCTIONAL
 
 Blender Custom JSON Exporter (.json)
 
-OBS: please note that this fork, is now very far from the original in functionality, and is in now way the same addin anymore.  When it's done, i will move it to a new repo. 
-
 ### Wanted File Format when its done:
 
 {
