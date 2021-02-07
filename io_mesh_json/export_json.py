@@ -67,22 +67,23 @@ def get_mesh_string( context, global_scale ):
     colors = []
 
     obj = context.active_object
-
+    
+    # Get material names and srgb values
     for matcolor in bpy.context.active_object.data.materials:
         Rcolor =  str(int(to_srgb(matcolor.diffuse_color[0]) * 15))
         Gcolor =  str(int(to_srgb(matcolor.diffuse_color[1]) * 15))
         Bcolor =  str(int(to_srgb(matcolor.diffuse_color[2]) * 15))
 
-        rgb15col = "["+Rcolor+", "+Gcolor+", "+Bcolor+"]"
-        colors.append(str('"'+matcolor.name+'" : '+rgb15col))
+        rgb12col = "["+Rcolor+", "+Gcolor+", "+Bcolor+"]"
+        colors.append(str('"'+matcolor.name+'" : '+rgb12col))
 
-    
+    # Get vertices of selected object
     for verts in obj.data.vertices:
         vertices.append("[" +str(int(verts.co.x*global_scale))+", " 
                         +str(int(verts.co.y*global_scale))+", "
                         +str(int(verts.co.z*global_scale))+"]")
 
-    
+    # Get faces of selected object
     for faces in obj.data.polygons:
         facename = "face"+str(faces.index)
         matindex = faces.material_index
