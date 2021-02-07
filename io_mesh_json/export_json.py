@@ -27,19 +27,7 @@ def ensure_extension( filepath, extension ):
 TEMPLATE_FILE = """\
 {
     "colours" : {
-        "TAIL_COLOUR" : "COLOUR_WOODY_GREEN",
-        "FUSELAGE_UPPER_COLOUR" : "COLOUR_DARK_WOODY_GREEN",
-        "FUSELAGE_UPPER_SIDES_COLOUR" : "COLOUR_WOODY_GREEN",
-        "WING_UPPER_COLOUR" : "COLOUR_DARK_WOODY_GREEN",
-        "NOSE_UPPER_COLOUR" : "COLOUR_LIGHT_GREY",
-        "FUSELAGE_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
-        "FUSELAGE_LOWER_SIDES_COLOUR" : "COLOUR_MEDIUM_GREY",
-        "WING_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
-        "NOSE_LOWER_COLOUR" : "COLOUR_LIGHT_GREY",
-        "CANOPY_COLOUR" : "COLOUR_BLACK",
-        "INTAKE_COLOUR" : "COLOUR_DARK_GREY",
-        "FUSELAGE_REAR_COLOUR" : "COLOUR_DARK_GREY",
-        "EXHAUST_COLOUR" : "COLOUR_DULL_RED"
+        %(colours)s
     },
 
     "bspTreeRoot" : "%(objname)s",
@@ -58,8 +46,7 @@ TEMPLATE_FACE = """\
         "%(name)s" : {
             "colour" : "%(colour)s",
             "vertices" : [%(index)s]
-        },
-"""
+        }"""
 
 def flat_array( array ):
     
@@ -72,8 +59,18 @@ def get_mesh_string( context, global_scale ):
 
     vertices = []
     objfaces = []
+    colors = []
 
     obj = context.active_object
+
+    for matcolor in bpy.context.active_object.data.materials:
+        Rcolor =  str(int(matcolor.diffuse_color[0] * 15))
+        Gcolor =  str(int(matcolor.diffuse_color[1] * 15))
+        Bcolor =  str(int(matcolor.diffuse_color[2] * 15))
+
+        rgb15col = "["+Rcolor+", "+Gcolor+", "+Bcolor+"]"
+        colors.append(str('"'+matcolor.name+'" : '+rgb15col))
+
     
     for verts in obj.data.vertices:
         vertices.append("[" +str(int(verts.co.x*global_scale))+", " 
@@ -85,6 +82,7 @@ def get_mesh_string( context, global_scale ):
         facename = "face"+str(faces.index)
         matindex = faces.material_index
         facecolor = obj.data.materials[matindex].name
+        
         objfaces.append(TEMPLATE_FACE % {
             "name" : facename,
             "colour" : facecolor,
@@ -92,9 +90,10 @@ def get_mesh_string( context, global_scale ):
         })
         
     return TEMPLATE_FILE % {
+        "colours" : ",\n        ".join( colors ),
         "objname" : obj.name,
         "vertices": ",\n        ".join(map(str, vertices )), #flat_array( vertices ),
-        "faces": "".join( objfaces ),
+        "faces": ",\n".join( objfaces ),
     }
 
 
