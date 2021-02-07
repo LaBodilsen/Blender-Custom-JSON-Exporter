@@ -24,7 +24,7 @@ bl_info = {
     "version": (0, 1, 0),
     "blender": (2, 90, 0),
     "location": "File > Import-Export",
-    "description": "Export Custom JSON format for Ernst Blofeld Amiga 3D engine",
+    "description": "Export JSON data format",
     "doc_url": "https://github.com/LaBodilsen/Blender-JSON-Exporter",
     "support": 'OFFICIAL',
     "category": "Import-Export",
@@ -95,7 +95,7 @@ class ExportJSON( bpy.types.Operator, ExportHelper ):
     def execute( self, context):
         print("Selected: " + context.active_object.name )
         from mathutils import Matrix
-        from. import export_json        
+        from . import export_json        
 
         if not self.properties.filepath:
             raise Exception("filename not set")
@@ -104,7 +104,7 @@ class ExportJSON( bpy.types.Operator, ExportHelper ):
             ignore=(
                 "axis_forward",
                 "axis_up",
-                "global_scale",
+#                "global_scale",
                 "check_existing",
                 "filter_glob",
             )
@@ -117,7 +117,7 @@ class ExportJSON( bpy.types.Operator, ExportHelper ):
         keywords["global_matrix"] = global_matrix
 
         filepath = self.filepath
-        export_json.save( self, context, **self.properties )
+        export_json.save( self, context, **keywords )
 
         return {'FINISHED'}
 #        return io_mesh_json.export_json.save( self, context, **self.properties )
