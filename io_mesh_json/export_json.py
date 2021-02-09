@@ -69,10 +69,10 @@ def get_mesh_string( context, global_scale ):
     obj = context.active_object
     
     # Get material names and srgb values
-    for matcolor in bpy.context.active_object.data.materials:
-        Rcolor =  str(int(to_srgb(matcolor.diffuse_color[0]) * 15))
-        Gcolor =  str(int(to_srgb(matcolor.diffuse_color[1]) * 15))
-        Bcolor =  str(int(to_srgb(matcolor.diffuse_color[2]) * 15))
+    for matcolor in obj.data.materials:
+        Rcolor =  str(round(to_srgb(matcolor.diffuse_color[0]) * 15))
+        Gcolor =  str(round(to_srgb(matcolor.diffuse_color[1]) * 15))
+        Bcolor =  str(round(to_srgb(matcolor.diffuse_color[2]) * 15))
 
         rgb12col = "["+Rcolor+", "+Gcolor+", "+Bcolor+"]"
         colors.append(str('"'+matcolor.name+'" : '+rgb12col))
@@ -84,16 +84,52 @@ def get_mesh_string( context, global_scale ):
                         +str(int(verts.co.z*global_scale))+"]")
 
     # Get faces of selected object
-    for faces in obj.data.polygons:
-        facename = "face"+str(faces.index)
-        matindex = faces.material_index
-        facecolor = obj.data.materials[matindex].name
+    # Look at selected object
+    actobj = obj
+    if actobj.type == 'MESH':      #Only look at MESH objects
+        print(actobj.name)
         
-        objfaces.append(TEMPLATE_FACE % {
-            "name" : facename,
-            "colour" : facecolor,
-            "index" : flat_array( faces.vertices[:] ),
-        })
+        bpy.ops.object.mode_set(mode='EDIT')  #set active object to edit mode.
+        bpy.ops.mesh.select_all(action='DESELECT') #deselect all faces
+
+        #iterate all Face Maps of object
+        for facemap in actobj.face_maps:
+            actobj.face_maps.active_index = facemap.index
+            bpy.ops.object.face_map_select(True)
+
+            #Switch to object mode, to reset .select status.
+            bpy.ops.object.mode_set(mode='OBJECT')  #set active object to object mode.
+
+            #iterate all faces, and process selected
+            for faces in actobj.data.polygons:
+                if faces.select:                 #Only look at selected faces
+                    facename = facemap.name+str(faces.index)
+                    facecolor = actobj.data.materials[faces.material_index].name
+                    objfaces.append(TEMPLATE_FACE % {
+                        "name" : facename,
+                        "colour" : facecolor,
+                        "index" : flat_array( faces.vertices[:] ),
+                    })
+
+                    #print("Name : " +facemap.name+str(faces.index))
+                    #print("Color : " +actobj.data.materials[faces.material_index].name)
+                    #print("Verts : [" + flat_array( faces.vertices[:] )+"]")
+
+            bpy.ops.object.mode_set(mode='EDIT')  #set active object to edit mode.
+            bpy.ops.object.face_map_deselect(True)
+        bpy.ops.object.mode_set(mode='OBJECT')  #set active object to object mode.
+    
+    
+    # for faces in obj.data.polygons:
+        # facename = "face"+str(faces.index)
+        # matindex = faces.material_index
+        # facecolor = obj.data.materials[matindex].name
+        
+        # objfaces.append(TEMPLATE_FACE % {
+            # "name" : facename,
+            # "colour" : facecolor,
+            # "index" : flat_array( faces.vertices[:] ),
+        # })
         
     return TEMPLATE_FILE % {
         "colours" : ",\n        ".join( colors ),
