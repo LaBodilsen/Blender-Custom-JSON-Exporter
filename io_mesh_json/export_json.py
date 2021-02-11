@@ -39,6 +39,10 @@ TEMPLATE_FILE = """\
     "faces" : {
 %(faces)s
     },
+
+    "shadowFaces": [
+        %(shadowfaces)s
+    ],
 }
 """
 
@@ -64,6 +68,7 @@ def get_mesh_string( context, global_scale ):
 
     vertices = []
     objfaces = []
+    shadowfaces = []
     colors = []
 
     obj = context.active_object
@@ -103,32 +108,41 @@ def get_mesh_string( context, global_scale ):
             #iterate all faces, and process selected
             for faces in actobj.data.polygons:
                 if faces.select:                 #Only look at selected faces
-                    if "-double" in facemap.name:
-                        #List the normal face
-                        facename = facemap.name.strip("-double").strip()+str(faces.index)
+                    facename = facemap.name
+                    shadow = True
+
+                    if "-noshadow" in facename:
+                        facename = facename.strip("-noshadow").strip()
+                        shadow = False                        
+                    
+                    if "-double" in facename:
+                        #List the normal face, strip tekst -double from the name
+                        facename = facename.strip("-double").strip()
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
-                            "name" : facename,
+                            "name" : facename + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( faces.vertices[:] ),
                         })
-                        #list the face double with reverse vertices order
-                        facename = facemap.name.strip("-double").strip()+"D"+str(faces.index)
+                        #list the face double with reverse vertices order, Add "D" to face name
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
-                            "name" : facename,
+                            "name" : facename + "D" + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( reversed(faces.vertices[:]) ),
                         })
+                        if shadow == True:
+                            shadowfaces.append('"' + facename+"D" + str(faces.index) + '"')
                     else:
-                        facename = facemap.name+str(faces.index)
+#                        facename = facemap.name+str(faces.index)
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
-                            "name" : facename,
+                            "name" : facename + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( faces.vertices[:] ),
                         })
-
+                    if shadow == True:
+                        shadowfaces.append('"' + facename + str(faces.index) + '"')
             bpy.ops.object.mode_set(mode='EDIT')  #set active object to edit mode.
             bpy.ops.object.face_map_deselect(True)
         bpy.ops.object.mode_set(mode='OBJECT')  #set active object to object mode.
@@ -138,6 +152,7 @@ def get_mesh_string( context, global_scale ):
         "objname" : obj.name,
         "vertices": ",\n        ".join(map(str, vertices )), #flat_array( vertices ),
         "faces": ",\n".join( objfaces ),
+        "shadowfaces": ",\n        ".join( shadowfaces ),
     }
 
 
