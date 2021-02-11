@@ -24,8 +24,6 @@ Blender Custom JSON Exporter (.json)
         "EXHAUST_COLOUR" : "COLOUR_DULL_RED"
     },
 
-    "bspTreeRoot" : "eurofighterSection",
-
     "vertices": [
         [     0,     0,     0 ],
         [ -5250,     0,     0 ],
@@ -290,6 +288,56 @@ Blender Custom JSON Exporter (.json)
         }
     },
 
+    "shadowFaces" : [
+        "canopyFrontLeftLowerFace",
+        "canopyFrontLeftUpperFace",
+        "canopyFrontFace",
+        "canopyFrontRightUpperFace",
+        "canopyFrontRightLowerFace",
+        "canopyRearLeftLowerFace",
+        "canopyRearLeftUpperFace",
+        "canopyRearFace",
+        "canopyRearRightUpperFace",
+        "canopyRearRightLowerFace",
+        "noseUpperLeftFace",
+        "noseUpperFace",
+        "noseUpperRightFace",
+        "cockpitLeftSideFace",
+        "cockpitLeftUpperFace",
+        "cockpitRightUpperFace",
+        "cockpitRightSideFace",
+        "tailLeftFace",
+        "tailRightFace",
+        "upperFuselageTopFace",
+        "upperFuselageLeftLowerFace",
+        "upperFuselageLeftUpperFace",
+        "upperFuselageRightUpperFace",
+        "upperFuselageRightLowerFace",
+        "fuselageRearFace",
+        "leftCanardUpperFace",
+        "rightCanardUpperFace",
+        "wingsUpperFace",
+        "leftCanardLowerFace",
+        "rightCanardLowerFace",
+        "wingsLowerFace",
+        "intakeLeftFace",
+        "intakeMiddleFace",
+        "intakeRightFace",
+        "lowerFuselageLeftFrontFace",
+        "lowerFuselageLeftMiddleFace",
+        "lowerFuselageLeftRearFace",
+        "lowerFuselageBottomFace",
+        "lowerFuselageRightFrontFace",
+        "lowerFuselageRightMiddleFace",
+        "lowerFuselageRightRearFace",
+        "cockpitLowerLeftFace",
+        "cockpitLowerFace",
+        "cockpitLowerRightFace",
+        "noseLowerLeftFace",
+        "noseLowerFace",
+        "noseLowerRightFace"
+    ],
+
     "bspTree" : {
         "splittingPlane" : "fuselageRearFace",
         "above" : {
@@ -345,13 +393,13 @@ Blender Custom JSON Exporter (.json)
                     "faces" : [ "intakeLeftFace", "intakeMiddleFace", "intakeRightFace" ]
                 },
                 "below" : {
-                    "faces" : [ "lowerFuselageLeftFrontFace", "lowerFuselageLeftMiddleFace", "lowerFuselageLeftRearFace",
-                                "lowerFuselageBottomFace",
-                                "lowerFuselageRightFrontFace", "lowerFuselageRightMiddleFace", "lowerFuselageRightRearFace"
+                    "faces" : [
+                        "lowerFuselageLeftFrontFace", "lowerFuselageLeftMiddleFace", "lowerFuselageLeftRearFace",
+                        "lowerFuselageBottomFace",
+                        "lowerFuselageRightFrontFace", "lowerFuselageRightMiddleFace", "lowerFuselageRightRearFace"
                     ]
                 }
             }
         }
     }
-
 }
