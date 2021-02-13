@@ -6,7 +6,7 @@ THIS IS A WIP AND NOT YET FULLY FUNCTIONAL
 Blender Custom JSON Exporter (.json)
 
 ### Wanted File Format when its done:
-
+```
 {
     "colours" : {
         "TAIL_COLOUR" : "COLOUR_WOODY_GREEN",
@@ -127,3 +127,4 @@ Blender Custom JSON Exporter (.json)
         }
     }
 }
+```
