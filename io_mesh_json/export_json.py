@@ -113,14 +113,16 @@ def get_mesh_string( context, global_scale ):
                 if faces.select:                 #Only look at selected faces
                     facename = facemap.name
                     shadow = True
-                    #Check if face is tagged with "-noshadow"
+
                     if "-noshadow" in facename:
-                        facename = facename.replace("-noshadow", "")
+                        facename = facename.replace("-noshadow", "").rstrip()
                         shadow = False                        
-                    #Check if face is tagged with "-double"
+                    
                     if "-double" in facename:
+                        dblmat = facename[-2:].lstrip("0")
+                        facename = facename.rstrip(facename[-2:])
                         #List the normal face, strip tekst -double from the name
-                        facename = facename.replace("-double", "").strip()
+                        facename = facename.replace("-double", "").rstrip()
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
                             "name" : facename + str(faces.index),
@@ -142,7 +144,7 @@ def get_mesh_string( context, global_scale ):
                             facename = facename.replace(prefix, posfix)
                         else:
                             facename = facename+"Dbl"
-                        facecolor = actobj.data.materials[faces.material_index].name
+                        facecolor = actobj.data.materials[int(dblmat)-1].name
                         objfaces.append(TEMPLATE_FACE % {
                             "name" :  facename + str(faces.index),
                             "colour" : facecolor,
