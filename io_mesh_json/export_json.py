@@ -43,6 +43,9 @@ TEMPLATE_FILE = """\
     "shadowFaces": [
         %(shadowfaces)s
     ],
+
+    "bspTree" : {
+    }
 }
 """
 
@@ -92,7 +95,7 @@ def get_mesh_string( context, global_scale ):
     # Look at selected object
     actobj = obj
     if actobj.type == 'MESH':      #Only look at MESH objects
-        print(actobj.name)
+#        print(actobj.name)
         
         bpy.ops.object.mode_set(mode='EDIT')  #set active object to edit mode.
         bpy.ops.mesh.select_all(action='DESELECT') #deselect all faces
@@ -105,44 +108,58 @@ def get_mesh_string( context, global_scale ):
             #Switch to object mode, to reset .select status.
             bpy.ops.object.mode_set(mode='OBJECT')  #set active object to object mode.
 
-            #iterate all faces, and process selected
+            #iterate all faces, and process only selected
             for faces in actobj.data.polygons:
                 if faces.select:                 #Only look at selected faces
                     facename = facemap.name
                     shadow = True
-
+                    #Check if face is tagged with "-noshadow"
                     if "-noshadow" in facename:
-                        facename = facename.strip("-noshadow").strip()
+                        facename = facename.replace("-noshadow", "")
                         shadow = False                        
-                    
+                    #Check if face is tagged with "-double"
                     if "-double" in facename:
                         #List the normal face, strip tekst -double from the name
-                        facename = facename.strip("-double").strip()
+                        facename = facename.replace("-double", "").strip()
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
                             "name" : facename + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( faces.vertices[:] ),
                         })
-                        #list the face double with reverse vertices order, Add "D" to face name
+                        if shadow == True:
+                            shadowfaces.append('"' + facename + str(faces.index) + '"')
+                        #list the face double with reverse vertices order,
+                        #If name contains Right or Upper, replace with Left or Lower
+                        #otherwise add "Dbl" to face name
+                        if "Right" in facename:
+                            prefix = "Right"
+                            posfix = "Left"
+                            facename = facename.replace(prefix, posfix)
+                        elif "Upper" in facename:
+                            prefix = "Upper"
+                            posfix = "Lower"
+                            facename = facename.replace(prefix, posfix)
+                        else:
+                            facename = facename+"Dbl"
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
-                            "name" : facename + "D" + str(faces.index),
+                            "name" :  facename + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( reversed(faces.vertices[:]) ),
                         })
                         if shadow == True:
-                            shadowfaces.append('"' + facename+"D" + str(faces.index) + '"')
+                            shadowfaces.append('"' + facename + str(faces.index) + '"')
                     else:
-#                        facename = facemap.name+str(faces.index)
                         facecolor = actobj.data.materials[faces.material_index].name
                         objfaces.append(TEMPLATE_FACE % {
                             "name" : facename + str(faces.index),
                             "colour" : facecolor,
                             "index" : flat_array( faces.vertices[:] ),
                         })
-                    if shadow == True:
-                        shadowfaces.append('"' + facename + str(faces.index) + '"')
+                        if shadow == True:
+                            shadowfaces.append('"' + facename + str(faces.index) + '"')
+
             bpy.ops.object.mode_set(mode='EDIT')  #set active object to edit mode.
             bpy.ops.object.face_map_deselect(True)
         bpy.ops.object.mode_set(mode='OBJECT')  #set active object to object mode.
