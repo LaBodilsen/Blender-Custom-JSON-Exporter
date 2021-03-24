@@ -1,6 +1,8 @@
 Blender-JSON-Exporter
 
 THIS IS A WIP AND NOT YET FULLY FUNCTIONAL
+
+Only functionality is BSPtree, everything else is implemented.
 =====================
 
 Blender Custom JSON Exporter (.json)
